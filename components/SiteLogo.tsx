@@ -4,14 +4,14 @@ import Link from "next/link";
 
 const LogoSize = {
   large: "size-14",
-  medium: "size-10",
+  medium: "size-8",
   small: "size-5",
 };
 
 const TextSize = {
-  large: "text-5xl",
-  medium: "text-3xl",
-  small: "text-xl",
+  large: "hidden sm:block sm:text-3xl lg:text-5xl",
+  medium: "hidden md:block text-xl",
+  small: "text-lg",
 };
 
 export default function SiteLogo({ size = "medium" }: { size?: "large" | "medium" | "small" }) {
