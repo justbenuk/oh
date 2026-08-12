@@ -4,7 +4,9 @@ import SiteContactForm from "@/features/contacts/forms/SiteContactForm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import LinearTitle from "@/components/LinearTitle";
 import Link from "next/link";
-import { CarTaxiFrontIcon, LocateIcon, MailIcon, StopCircle } from "lucide-react";
+import { CarTaxiFrontIcon, LocateIcon, MailIcon } from "lucide-react";
+import { FaFacebook, FaInstagram, FaTwitter } from "react-icons/fa";
+import PageTitle from "@/components/PageTitle";
 
 export const metadata: Metadata = {
   title: "Contact Us",
@@ -21,8 +23,11 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <>
+      <PageTitle title="Contact Us" image="/assets/taxi.jpg">
+        <span>Want to know more about us?</span>
+      </PageTitle>
       <PageContainer>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-30">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-30 py-20">
           <div className="flex flex-col justify-center items-start space-y-4">
             <LinearTitle text="Have Questions?" className="mb-2 py-2" />
             <span className="text-xl">
@@ -54,22 +59,19 @@ export default function ContactPage() {
                 </div>
               </Link>
             </div>
-            <div className="flex flex-row items-center gap-10 mt-4 bg-secondary p-2 rounded-xl">
+            <div className="flex flex-row items-center gap-10 mt-4 bg-secondary py-2 px-4 rounded-xl">
               <div className="font-semibold text-lg flex flex-col leading-4">
                 <span>Follow</span>
                 <span>Us On</span>
               </div>
               <Link href={"/"}>
-                <StopCircle />
+                <FaFacebook className="size-6" />
               </Link>
               <Link href={"/"}>
-                <StopCircle />
+                <FaTwitter className="size-6" />
               </Link>
               <Link href={"/"}>
-                <StopCircle />
-              </Link>
-              <Link href={"/"}>
-                <StopCircle />
+                <FaInstagram className="size-6" />
               </Link>
             </div>
           </div>
@@ -77,7 +79,7 @@ export default function ContactPage() {
             <CardHeader>
               <CardTitle className="text-2xl">Contact Us</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="flex flex-col justify-center">
               <SiteContactForm />
             </CardContent>
           </Card>

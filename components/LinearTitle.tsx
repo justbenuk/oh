@@ -6,5 +6,9 @@ interface Props {
 }
 
 export default function LinearTitle({ text, className }: Props) {
-  return <h1 className={cn("text-8xl font-bold bg-linear-to-r from-black via-primary to-primary text-transparent bg-clip-text", className)}>{text}</h1>;
+  return (
+    <h1 className={cn("text-4xl md:text-6xl 2xl:text-8xl font-bold bg-linear-to-r from-black via-primary to-primary text-transparent bg-clip-text wrap-break-word", className)}>
+      {text}
+    </h1>
+  );
 }
