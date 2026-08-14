@@ -1,0 +1,13 @@
+model Licensing {
+  id            String  @id @default(cuid())
+  name          String
+  websiteUrl    String?
+  logo          String?
+  email         String?
+  contactNumber String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("licensing")
+}
