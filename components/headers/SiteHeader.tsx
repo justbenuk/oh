@@ -1,4 +1,6 @@
+import SiteLoggedInMenu from "../menus/SiteLoggedInMenu";
 import SiteMenu from "../menus/SiteMenu";
+import SiteMobileMenu from "../menus/SiteMobileMenu";
 import SiteLogo from "../SiteLogo";
 
 export default function SiteHeader() {
@@ -7,10 +9,15 @@ export default function SiteHeader() {
       <div className="justify-self-start">
         <SiteLogo size="medium" />
       </div>
-      <div className="justify-self-center">
+      <div className="hidden justify-self-center lg:block">
         <SiteMenu />
       </div>
-      <div className="justify-self-end">mobile</div>
+      <div className="justify-self-end">
+        <div className="hidden lg:flex">
+          <SiteLoggedInMenu />
+        </div>
+        <SiteMobileMenu />
+      </div>
     </header>
   );
 }

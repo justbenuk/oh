@@ -1,4 +1,5 @@
 import SiteLogo from "@/components/SiteLogo";
+import Image from "next/image";
 import { ReactNode } from "react";
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
@@ -13,7 +14,7 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         </div>
       </div>
       <div className="relative hidden bg-muted lg:block">
-        <img src="/placeholder.svg" alt="Image" className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale" />
+        <Image src="/assets/taxi2.jpg" fill alt="Image" className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale" />
       </div>
     </div>
   );
