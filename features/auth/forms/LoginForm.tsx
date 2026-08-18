@@ -8,10 +8,11 @@ import { Field, FieldLabel, FieldContent, FieldError } from "@/components/ui/fie
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { LoginUserAction } from "../AuthActions";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export default function LoginForm() {
+  const router = useRouter();
   const form = useForm({
     resolver: zodResolver(LoginUserSchema),
     defaultValues: {
@@ -23,7 +24,8 @@ export default function LoginForm() {
   async function handleLoginForm(data: z.infer<typeof LoginUserSchema>) {
     const response = await LoginUserAction(data);
     if (response.success) {
-      redirect("/dashboard");
+      router.replace("/dashboard");
+      router.refresh();
     } else {
       toast.error("failed to login");
     }

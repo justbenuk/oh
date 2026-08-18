@@ -5,6 +5,7 @@ import { LoginUserSchema, RegisterUserSchema } from "./AuthSchema";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { revalidatePath } from "next/cache";
 
 export async function RegisterUserAction(data: z.infer<typeof RegisterUserSchema>) {
   try {
@@ -20,6 +21,7 @@ export async function RegisterUserAction(data: z.infer<typeof RegisterUserSchema
       headers: await headers(),
     });
 
+    revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
     if (isRedirectError(error)) {
@@ -40,6 +42,7 @@ export async function LoginUserAction(data: z.infer<typeof LoginUserSchema>) {
       },
       headers: await headers(),
     });
+    revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
     if (isRedirectError(error)) {

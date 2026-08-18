@@ -1,22 +1,27 @@
 "use client";
-import { authClient } from "@/lib/auth-client";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Button } from "../ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "../ui/dropdown-menu";
-import { LayoutDashboardIcon } from "lucide-react";
+import { DiamondMinus, LayoutDashboardIcon } from "lucide-react";
 import Link from "next/link";
+import SignoutButton from "../SignoutButton";
 
-export default function SiteAuthMenu() {
-  const { data: user } = authClient.useSession();
+type SiteAuthMenuProps = {
+  user: {
+    name: string;
+    email: string;
+    image?: string | null;
+    role?: string | null;
+  };
+};
 
-  if (!user?.user) return null;
-
+export default function SiteAuthMenu({ user }: SiteAuthMenuProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button size="icon" className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground" variant={"ghost"}>
           <Avatar className="h-8 w-8 rounded-lg dark:grayscale">
-            <AvatarImage src={user?.user.image as string} />
+            <AvatarImage src={user.image ?? undefined} />
             <AvatarFallback className="bg-primary">OH</AvatarFallback>
           </Avatar>
         </Button>
@@ -25,12 +30,12 @@ export default function SiteAuthMenu() {
         <DropdownMenuLabel className="p-0 font-normal">
           <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
             <Avatar className="h-8 w-8 rounded-lg">
-              <AvatarImage src={user.user.image as string} alt={user.user?.name} />
+              <AvatarImage src={user.image ?? undefined} alt={user.name} />
               <AvatarFallback className="rounded-lg">OH</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <span className="truncate font-medium">{user.user.name}</span>
-              <span className="truncate text-xs text-muted-foreground">{user.user.email}</span>
+              <span className="truncate font-medium">{user.name}</span>
+              <span className="truncate text-xs text-muted-foreground">{user.email}</span>
             </div>
           </div>
         </DropdownMenuLabel>
@@ -43,6 +48,21 @@ export default function SiteAuthMenu() {
             </Link>
           </DropdownMenuItem>
         </DropdownMenuGroup>
+        {user.role === "admin" && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem asChild>
+                <Link href={"/portal"}>
+                  <DiamondMinus />
+                  <span>Portal</span>
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </>
+        )}
+        <DropdownMenuSeparator />
+        <SignoutButton />
       </DropdownMenuContent>
     </DropdownMenu>
   );

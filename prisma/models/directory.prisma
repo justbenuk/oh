@@ -11,3 +11,15 @@ model Licensing {
 
   @@map("licensing")
 }
+
+model DirectoryCategory {
+  id          String @id @default(cuid())
+  name        String
+  description String
+  image       String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("directory-category")
+}

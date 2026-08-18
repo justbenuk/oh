@@ -8,7 +8,7 @@ interface PageProps {
 
 const sizes = {
   large: "max-w-7xl",
-  dashboard: "container",
+  dashboard: "container py-6",
   read: "max-w-3xl",
 };
 

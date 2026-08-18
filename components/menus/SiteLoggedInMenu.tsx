@@ -27,7 +27,7 @@ export default async function SiteLoggedInMenu() {
           </Button>
         </div>
       ) : (
-        <SiteAuthMenu />
+        <SiteAuthMenu user={session.user} />
       )}
     </div>
   );

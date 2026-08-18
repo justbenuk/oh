@@ -9,9 +9,10 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { RegisterUserAction } from "../AuthActions";
 import { toast } from "sonner";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function RegisterForm() {
+  const router = useRouter();
   const form = useForm({
     resolver: zodResolver(RegisterUserSchema),
     defaultValues: {
@@ -27,7 +28,8 @@ export default function RegisterForm() {
 
     if (response.success) {
       toast.success("User Registered");
-      redirect("/dashboard");
+      router.replace("/dashboard");
+      router.refresh();
     } else {
       toast.error("Failed to register user");
     }
