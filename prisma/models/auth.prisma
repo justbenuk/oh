@@ -12,6 +12,7 @@ model User {
   banExpires    DateTime?
   sessions      Session[]
   accounts      Account[]
+  medias        Media[]
 
   @@unique([email])
   @@map("user")
