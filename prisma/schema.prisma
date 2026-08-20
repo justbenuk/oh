@@ -5,3 +5,165 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+// ========================================
+// Media
+// ========================================
+
+enum MediaType {
+  IMAGE
+  VIDEO
+  DOCUMENT
+}
+
+model Media {
+  id String @id @default(cuid())
+
+  key     String  @unique
+  url     String
+  name    String?
+  alt     String?
+  caption String?
+
+  type     MediaType @default(IMAGE)
+  mimeType String?
+  size     Int?
+  width    Int?
+  height   Int?
+
+  uploadedById String?
+  uploadedBy   User? @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+
+  licensingId String?
+  licensing   Licensing? @relation(fields: [licensingId], references: [id], onDelete: SetNull)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([uploadedById])
+  @@index([licensingId])
+  @@index([type])
+
+  @@map("media")
+}
+
+// ========================================
+// Directory
+// ========================================
+
+model Licensing {
+  id            String  @id @default(cuid())
+  name          String
+  websiteUrl    String?
+  logo          String?
+  email         String?
+  contactNumber String?
+
+  media Media[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("licensing")
+}
+
+model DirectoryCategory {
+  id          String @id @default(cuid())
+  name        String
+  description String
+  image       String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("directory-category")
+}
+
+// ========================================
+// Contact Message Forms
+// ========================================
+
+model SiteContact {
+  id      String  @id @default(cuid())
+  name    String
+  email   String
+  subject String?
+  message String
+
+  createdAt DateTime @default(now())
+
+  @@map("site-contact")
+}
+
+// ========================================
+// Auth
+// ========================================
+
+model User {
+  id            String    @id
+  name          String
+  email         String
+  emailVerified Boolean   @default(false)
+  image         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  role          String?
+  banned        Boolean?  @default(false)
+  banReason     String?
+  banExpires    DateTime?
+  sessions      Session[]
+  accounts      Account[]
+  medias        Media[]
+
+  @@unique([email])
+  @@map("user")
+}
+
+model Session {
+  id             String   @id
+  expiresAt      DateTime
+  token          String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  ipAddress      String?
+  userAgent      String?
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  impersonatedBy String?
+
+  @@unique([token])
+  @@index([userId])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([identifier])
+  @@map("verification")
+}

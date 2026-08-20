@@ -1,14 +1,17 @@
 import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
 import { headers } from "next/headers";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
-import { UploadThingError } from "uploadthing/server";
+import { UploadThingError, UTApi } from "uploadthing/server";
 
 const f = createUploadthing();
+export const utapi = new UTApi();
+
 
 export const ourFileRouter = {
-  imageUploader: f({
+  logoUploader: f({
     image: {
-      maxFileSize: "4MB",
+      maxFileSize: "32MB",
       maxFileCount: 1,
     },
   })
@@ -20,11 +23,24 @@ export const ourFileRouter = {
       return { userId: session.user.id };
     })
     .onUploadComplete(async ({ metadata, file }) => {
-      console.log("Upload complete for userId:", metadata.userId);
+    //after the file is uploaded, we save the details inthe database. This will help us to be able to reuse images if we want to.. but also delete files easier
+      const logo = await db.media.create({
+        data: {
+          key: file.key,
+          url: file.ufsUrl,
+          name: file.name,
+          size: file.size,
+          mimeType: file.type,
+          type: 'IMAGE',
+          uploadedById: metadata.userId,
+        }
+      })
 
-      console.log("file url", file.ufsUrl);
-
-      return { uploadedBy: metadata.userId };
+      //return the url
+        return {
+        mediaId: logo.id,
+        url: file.ufsUrl,
+      }
     }),
 } satisfies FileRouter;
 
