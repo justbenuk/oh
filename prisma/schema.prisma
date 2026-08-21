@@ -58,6 +58,8 @@ model Licensing {
   logo          String?
   email         String?
   contactNumber String?
+  longitude     Float?
+  latitude      Float?
 
   media Media[]
 

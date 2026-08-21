@@ -4,9 +4,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import { LicenseSchema } from "../DirectorySchema";
 import z from "zod";
-import { Field, FieldContent, FieldDescription, FieldError, FieldGroup, FieldLabel, FieldLegend } from "@/components/ui/field";
+import { Field, FieldContent, FieldError, FieldLabel,} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { AddLicensingAuthorityAction } from "../DirectoryActions";
+import { toast } from "sonner";
 
 export default function AddLicensingForm() {
   const form = useForm({
@@ -16,12 +18,20 @@ export default function AddLicensingForm() {
       websiteUrl: '',
       logo: '',
       email: '',
-      contactNumber: ''
+      contactNumber: '',
+      longitude: 0,
+      latitude: 0,
     }
   })
 
   async function handleAddLicensing(data: z.infer<typeof LicenseSchema>) {
-  console.log(data)
+    const response = await AddLicensingAuthorityAction(data)
+
+    if(response.success) {
+      toast.success('Authority Added')
+    } else {
+      toast.error('Failed to add')
+    }
 }
 
   return (
@@ -119,6 +129,43 @@ export default function AddLicensingForm() {
               <FieldLabel>Authority Logo</FieldLabel>
               <FieldContent>
                 <Input {...field} />
+                {fieldState.invalid && <FieldError errors={[fieldState.error]}/>}
+              </FieldContent>
+              </Field>
+          )}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <div className="col-span-1">
+          <h1 className="text-xl font-semibold">Longitude</h1>
+        </div>
+        <Controller
+          name="longitude"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field className="lg:col-span-2">
+              <FieldLabel>Longitude</FieldLabel>
+              <FieldContent>
+                <Input {...field} type="number"/>
+                {fieldState.invalid && <FieldError errors={[fieldState.error]}/>}
+              </FieldContent>
+              </Field>
+          )}
+        />
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+        <div className="col-span-1">
+          <h1 className="text-xl font-semibold">Latitude</h1>
+        </div>
+        <Controller
+          name="latitude"
+          control={form.control}
+          render={({ field, fieldState }) => (
+            <Field className="lg:col-span-2">
+              <FieldLabel>Latitude</FieldLabel>
+              <FieldContent>
+                <Input {...field} type="number"/>
                 {fieldState.invalid && <FieldError errors={[fieldState.error]}/>}
               </FieldContent>
               </Field>

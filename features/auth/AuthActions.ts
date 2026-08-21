@@ -6,6 +6,7 @@ import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 export async function RegisterUserAction(data: z.infer<typeof RegisterUserSchema>) {
   try {
@@ -50,4 +51,16 @@ export async function LoginUserAction(data: z.infer<typeof LoginUserSchema>) {
     }
     throw new Error(`Register User: ${error}`);
   }
+}
+
+export async function isAdmin() {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  if (!session) redirect('/login')
+
+  if (session.user.role !== 'admin') redirect('/unauthorised')
+
+  return session.user
 }
