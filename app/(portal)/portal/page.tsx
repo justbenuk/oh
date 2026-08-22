@@ -1,3 +1,5 @@
+import PageContainer from "@/components/PageContainer";
+
 export default function PortalPage() {
-  return <div>Portal Page</div>;
+  return <PageContainer size="dashboard">Portal Page</PageContainer>;
 }

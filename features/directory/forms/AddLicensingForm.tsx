@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { AddLicensingAuthorityAction } from "../DirectoryActions";
 import { toast } from "sonner";
+import Image from "next/image";
+import MediaUpload from "@/features/media/MediaUpload";
 
 export default function AddLicensingForm() {
   const form = useForm({
@@ -16,7 +18,7 @@ export default function AddLicensingForm() {
     defaultValues: {
       name: '',
       websiteUrl: '',
-      logo: '',
+      logo: undefined,
       email: '',
       contactNumber: '',
       longitude: 0,
@@ -128,8 +130,15 @@ export default function AddLicensingForm() {
             <Field className="lg:col-span-2">
               <FieldLabel>Authority Logo</FieldLabel>
               <FieldContent>
-                <Input {...field} />
-                {fieldState.invalid && <FieldError errors={[fieldState.error]}/>}
+                {field.value ? (
+                  <Image src={field.value.url} alt="Authority Logo" width={100} height={100}/>
+                ) : null}
+                <MediaUpload
+                  endpoint="logoUploader"
+                  value={field.value ?? null}
+                  onChange={field.onChange}
+                />
+                {fieldState.invalid && <FieldError errors={[fieldState.error]}/>} 
               </FieldContent>
               </Field>
           )}

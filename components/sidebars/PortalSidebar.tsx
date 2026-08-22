@@ -5,7 +5,7 @@ import PortalDirectoryItems from "../menus/PortalDirectoryItems";
 
 export default function PortalSidebar() {
   return (
-    <Sidebar variant="inset" collapsible="icon">
+    <Sidebar variant="inset">
       <SidebarHeader className="px-0">
         <SidebarMenu>
           <SidebarMenuItem>

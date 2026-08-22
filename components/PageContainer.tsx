@@ -13,5 +13,5 @@ const sizes = {
 };
 
 export default function PageContainer({ children, size = "large" }: PageProps) {
-  return <div className={cn("w-full mx-auto px-6 2xl:px-0", sizes[size])}>{children}</div>;
+  return <div className={cn("w-full mx-auto px-6", sizes[size])}>{children}</div>;
 }
