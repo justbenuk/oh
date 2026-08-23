@@ -10,7 +10,7 @@ import type { UploadedMedia } from "./MediaSchema";
 type Props = {
   endpoint: keyof OurFileRouter;
   value: UploadedMedia | null;
-  onChange: (media: UploadedMedia) => void;
+  onChangeAction: (media: UploadedMedia) => void;
   label?: string;
   replaceLabel?: string;
 };
@@ -18,7 +18,7 @@ type Props = {
 export default function MediaUpload({
   endpoint,
   value,
-  onChange,
+  onChangeAction,
   label = "Upload image",
   replaceLabel = "Replace image",
 }: Props) {
@@ -60,7 +60,7 @@ export default function MediaUpload({
         const media = { id: uploaded.mediaId, url: uploaded.url };
 
         pendingMediaId.current = media.id;
-        onChange(media);
+        onChangeAction(media);
 
         if (previousPendingMediaId && previousPendingMediaId !== media.id) {
           try {

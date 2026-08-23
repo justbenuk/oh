@@ -1,5 +1,22 @@
 export const MENUITEMS = [
   {
+    name: "Directory",
+    items: [
+      {
+        name: "Companies",
+        href: "/companies",
+      },
+      {
+        name: "Licensing Authorities",
+        href: "/licensing",
+      },
+      {
+        name: "Categories",
+        href: "/categories",
+      },
+    ],
+  },
+  {
     name: "About",
     href: "/about",
   },

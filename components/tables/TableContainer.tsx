@@ -15,11 +15,13 @@ type TableRow = {
 type TableContainerProps<TData extends TableRow> = {
   data: TData[];
   columns: ColDef<TData>[];
+  size?: 10 | 20 | 50 | 100
 };
 
 export default function TableContainer<TData extends TableRow>({
   data,
   columns,
+  size = 20
 }: TableContainerProps<TData>) {
 
    const modules = [AllCommunityModule];
@@ -43,26 +45,31 @@ export default function TableContainer<TData extends TableRow>({
       <div className="grid gap-6">
         <div className="flex flex-row items-end-end md:w-1/2">
           <TableSearch
-            title="Search users..."
+            title="Search..."
             search={search}
             setSearch={setSearch}
           />
         </div>
-        <AgGridReact<TData>
-          quickFilterText={search}
-          defaultColDef={defaultColDef}
-          domLayout="autoHeight"
-          theme={myTheme}
-          rowData={data}
-          columnDefs={columns}
-          getRowId={(row) => String(row.data.id)}
-          pagination={true}
-          paginationPageSizeSelector={[10, 20, 50, 100]}
-          paginationPageSize={10}
-          autoSizeStrategy={{
-            type: "fitGridWidth",
-          }}
-        />
+        <div className="w-full overflow-x-auto">
+          <div className="w-[700px] md:w-full">
+            <AgGridReact<TData>
+                      quickFilterText={search}
+                      defaultColDef={defaultColDef}
+                      domLayout="autoHeight"
+                      theme={myTheme}
+                      rowData={data}
+                      columnDefs={columns}
+                      getRowId={(row) => String(row.data.id)}
+                      pagination={true}
+                      paginationPageSizeSelector={[10, 20, 50, 100]}
+                      paginationPageSize={size}
+                      autoSizeStrategy={{
+                        type: 'fitGridWidth',
+                      }}
+                    />
+          </div>
+        </div>
+
       </div>
     </AgGridProvider>  )
 }

@@ -54,6 +54,7 @@ model Media {
 model Licensing {
   id            String  @id @default(cuid())
   name          String
+  slug String @default("")
   websiteUrl    String?
   logo          String?
   email         String?
