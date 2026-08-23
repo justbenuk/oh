@@ -4,8 +4,22 @@ import { PrismaClient } from "@prisma/client";
 
 const connectionString = `${process.env.DATABASE_URL}`;
 
-const adapter = new PrismaPg({ connectionString });
+const globalForPrisma = globalThis as unknown as {
+  db: PrismaClient | undefined;
+};
 
-const db = new PrismaClient({ adapter });
+const db =
+  globalForPrisma.db ??
+  new PrismaClient({
+    adapter: new PrismaPg({
+      connectionString,
+      max: 5,
+      connectionTimeoutMillis: 15_000,
+      idleTimeoutMillis: 10 * 60_000,
+      keepAlive: true,
+    }),
+  });
+
+if (process.env.NODE_ENV !== "production") globalForPrisma.db = db;
 
 export { db };

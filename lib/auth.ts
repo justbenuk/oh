@@ -4,16 +4,31 @@ import { db } from "./db";
 import { admin } from "better-auth/plugins";
 import { nextCookies } from "better-auth/next-js";
 
-const baseURL = process.env.BETTER_AUTH_URL ?? (process.env.NODE_ENV === "production" ? "https://operatorhub.app" : "http://localhost:3000");
+const baseURL =
+  process.env.BETTER_AUTH_URL ??
+  (process.env.NODE_ENV === "production"
+    ? "https://operatorhub.app"
+    : "http://localhost:3000");
 
 export const auth = betterAuth({
   baseURL,
-  trustedOrigins: [baseURL, "https://operatorhub.app", "https://www.operatorhub.app", "http://localhost:3000"],
+  trustedOrigins: [
+    baseURL,
+    "https://operatorhub.app",
+    "https://www.operatorhub.app",
+    "http://localhost:3000",
+  ],
   database: prismaAdapter(db, {
     provider: "postgresql",
   }),
   emailAndPassword: {
     enabled: true,
+  },
+  session: {
+    cookieCache: {
+      enabled: true,
+      maxAge: 60,
+    },
   },
   plugins: [admin(), nextCookies()],
 });

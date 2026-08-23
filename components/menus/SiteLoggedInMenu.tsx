@@ -1,14 +1,11 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
+import { getSession } from "@/lib/session";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { CarTaxiFront, PlusIcon } from "lucide-react";
 import SiteAuthMenu from "./SiteAuthMenu";
 
 export default async function SiteLoggedInMenu() {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  const session = await getSession();
   return (
     <div className="flex flex-row gap-3">
       {!session?.user ? (

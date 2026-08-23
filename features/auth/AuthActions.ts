@@ -2,13 +2,13 @@
 
 import z from "zod";
 import { LoginUserSchema, RegisterUserSchema } from "./AuthSchema";
-import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
 
-export async function RegisterUserAction(data: z.infer<typeof RegisterUserSchema>) {
+export async function RegisterUserAction(
+  data: z.infer<typeof RegisterUserSchema>,
+) {
   try {
     const validated = RegisterUserSchema.parse(data);
 
@@ -25,9 +25,6 @@ export async function RegisterUserAction(data: z.infer<typeof RegisterUserSchema
     revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
-    if (isRedirectError(error)) {
-      throw Error;
-    }
     throw new Error(`Register User: ${error}`);
   }
 }
@@ -46,21 +43,6 @@ export async function LoginUserAction(data: z.infer<typeof LoginUserSchema>) {
     revalidatePath("/", "layout");
     return { success: true };
   } catch (error) {
-    if (isRedirectError(error)) {
-      throw Error;
-    }
-    throw new Error(`Register User: ${error}`);
+    throw new Error(`Login User: ${error}`);
   }
-}
-
-export async function isAdmin() {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  })
-
-  if (!session) redirect('/login')
-
-  if (session.user.role !== 'admin') redirect('/unauthorised')
-
-  return session.user
 }

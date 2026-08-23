@@ -5,12 +5,13 @@ import {
   EditLicenseSchema,
   type LicenseFormValues,
 } from "./DirectorySchema";
-import { isAdmin } from "../auth/AuthActions";
+import { requireAdmin } from "@/lib/session";
 import { db } from "@/lib/db";
 import { findOwnedPendingMedia } from "@/features/media/media-service";
 import type { UploadedMedia } from "@/features/media/MediaSchema";
 import slugify from "slugify";
 import { revalidatePath } from "next/cache";
+import { utapi } from "@/app/api/uploadthing/core";
 
 const licensingPath = "/portal/licensing";
 
@@ -28,23 +29,61 @@ function createLicensingSlug(name: string) {
   return slugify(name, { lower: true });
 }
 
+export async function DeleteAuthorityById(id: string) {
+  await requireAdmin();
+  try {
+    const authority = await db.licensing.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        media: true,
+      },
+    });
 
-export async function FetchSingleLicensingAction({slug}: {slug: string}){
-  return db.licensing.findFirst({
-    where: {slug}
-  })
+    if (!authority) throw new Error("Authority not found");
+
+    const mediaKeys = authority.media.map((media) => media.key);
+
+    await db.$transaction(async (tx) => {
+      await tx.media.deleteMany({
+        where: {
+          licensingId: id,
+        },
+      });
+      await tx.licensing.delete({
+        where: { id },
+      });
+    });
+
+    if (mediaKeys.length > 0) {
+      await utapi.deleteFiles(mediaKeys);
+    }
+
+    revalidatePath(licensingPath);
+    return { success: true };
+  } catch (error) {
+    throw new Error(`${error}`);
+  }
 }
 
-export async function FetchSingleLicensingActionById({id}: {id: string}){
-  await isAdmin()
+export async function FetchSingleLicensingAction({ slug }: { slug: string }) {
+  return db.licensing.findFirst({
+    where: { slug },
+  });
+}
+
+export async function FetchSingleLicensingActionById({ id }: { id: string }) {
+  await requireAdmin();
   return db.licensing.findUnique({
-    where: {id}
-  })
+    where: { id },
+  });
 }
 
 export async function AddLicensingAuthorityAction(data: LicenseFormValues) {
+  const user = await requireAdmin();
+
   try {
-    const user = await isAdmin();
     const validated = AddLicenseSchema.parse(data);
     const { logo, ...licensing } = validated;
 
@@ -76,8 +115,9 @@ export async function UpdateLicensingAuthorityAction(
   authorityId: string,
   data: LicenseFormValues,
 ) {
+  const user = await requireAdmin();
+
   try {
-    const user = await isAdmin();
     const validated = EditLicenseSchema.parse(data);
     const { logo, ...licensing } = validated;
 

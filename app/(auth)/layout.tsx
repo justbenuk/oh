@@ -1,8 +1,18 @@
 import SiteLogo from "@/components/SiteLogo";
 import Image from "next/image";
 import { ReactNode } from "react";
+import { getSession } from "@/lib/session";
+import { redirect } from "next/navigation";
 
-export default function AuthLayout({ children }: { children: ReactNode }) {
+export default async function AuthLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
+  const session = await getSession();
+
+  if (session?.user) redirect("/dashboard");
+
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -14,7 +24,12 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
         </div>
       </div>
       <div className="relative hidden bg-muted lg:block">
-        <Image src="/assets/taxi2.jpg" fill alt="Image" className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale" />
+        <Image
+          src="/assets/taxi2.jpg"
+          fill
+          alt="Image"
+          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+        />
       </div>
     </div>
   );
