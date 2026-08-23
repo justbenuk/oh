@@ -1,3 +1,4 @@
+"use client";
 import { Licensing } from "@prisma/client";
 import { ColDef, ICellRendererParams } from "ag-grid-community";
 import TableContainer from "@/components/tables/TableContainer";

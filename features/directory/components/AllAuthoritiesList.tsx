@@ -1,37 +1,17 @@
-"use client";
-
-import { Licensing } from "@prisma/client";
-import { useEffect, useState } from "react";
-import { FetchAllLicensingAuthorities } from "../DirectoryActions";
-import TableSkeleton from "@/components/skeletons/TableSkeleton";
 import ErrorCard from "@/components/ErrorCard";
+import { FetchAllLicensingAuthorities } from "../DirectoryActions";
 import AuthoritiesTable from "../tables/AuthoritiesTable";
 
-export default function AllAuthoritiesList() {
-  const [authorities, setAuthorities] = useState<Licensing[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>();
+export default async function AllAuthoritiesList() {
+  const authorities = await FetchAllLicensingAuthorities();
 
-  useEffect(() => {
-    async function loadData() {
-      setLoading(true);
-      const response = await FetchAllLicensingAuthorities();
-
-      if (response.success && response.data) {
-        setAuthorities(response.data);
-      } else {
-        setError("Failed to load data");
-      }
-      setLoading(false);
-    }
-    loadData();
-  }, []);
-
-  if (loading) return <TableSkeleton />;
-  if (error)
+  if (!authorities.data)
     return (
-      <ErrorCard title="Sorry! Something Went Wrong" description={error} />
+      <ErrorCard
+        title="Something Went Wrong"
+        description="We failed to load the data"
+      />
     );
 
-  return <AuthoritiesTable authorities={authorities} />;
+  return <AuthoritiesTable authorities={authorities.data} />;
 }
