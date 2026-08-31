@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import {
   Field,
   FieldContent,
-  FieldDescription,
   FieldError,
   FieldLabel,
 } from "@/components/ui/field";
@@ -36,26 +35,6 @@ type LicensingFormProps =
       mode: "edit";
       authority: Licensing;
     };
-
-type FormSectionProps = {
-  title: string;
-  description?: string;
-  children?: React.ReactNode;
-};
-
-function FormSection({ title, description, children }: FormSectionProps) {
-  return (
-    <div className="grid grid-cols-1 gap-10 lg:grid-cols-3">
-      <div className="col-span-1">
-        <h1 className="text-xl font-semibold">{title}</h1>
-        {description ? (
-          <p className="text-md text-primary-foreground">{description}</p>
-        ) : null}
-      </div>
-      {children}
-    </div>
-  );
-}
 
 export default function LicensingForm(props: LicensingFormProps) {
   const router = useRouter();

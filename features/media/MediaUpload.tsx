@@ -1,10 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
 import type { OurFileRouter } from "@/app/api/uploadthing/core";
 import { UploadButton } from "@/lib/uploadthing";
 import { toast } from "sonner";
-import { DeletePendingMediaAction } from "./MediaActions";
 import type { UploadedMedia } from "./MediaSchema";
 
 type Props = {
@@ -22,16 +20,6 @@ export default function MediaUpload({
   label = "Upload image",
   replaceLabel = "Replace image",
 }: Props) {
-  const pendingMediaId = useRef<string | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (pendingMediaId.current) {
-        void DeletePendingMediaAction(pendingMediaId.current);
-      }
-    };
-  }, []);
-
   return (
     <UploadButton
       endpoint={endpoint}
@@ -56,19 +44,9 @@ export default function MediaUpload({
           return;
         }
 
-        const previousPendingMediaId = pendingMediaId.current;
         const media = { id: uploaded.mediaId, url: uploaded.url };
 
-        pendingMediaId.current = media.id;
         onChangeAction(media);
-
-        if (previousPendingMediaId && previousPendingMediaId !== media.id) {
-          try {
-            await DeletePendingMediaAction(previousPendingMediaId);
-          } catch {
-            toast.error("The previous upload could not be removed");
-          }
-        }
       }}
       onUploadError={(error) => {
         toast.error(error.message || "Upload failed");

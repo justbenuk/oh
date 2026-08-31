@@ -1,7 +1,10 @@
 "use server";
 
 import {
+  AddDirectoryCategorySchema,
   AddLicenseSchema,
+  DirectoryCategoryFormValues,
+  EditDirectoryCategorySchema,
   EditLicenseSchema,
   type LicenseFormValues,
 } from "./DirectorySchema";
@@ -14,6 +17,7 @@ import { revalidatePath } from "next/cache";
 import { utapi } from "@/app/api/uploadthing/core";
 
 const licensingPath = "/portal/licensing";
+const categoryPath = "/portal/directory/categories";
 
 async function verifyPendingLogo(logo: UploadedMedia, userId: string) {
   const media = await findOwnedPendingMedia(logo.id, userId);
@@ -167,5 +171,100 @@ export async function FetchAllLicensingAuthorities(take?: number) {
     return { success: true, data };
   } catch (error) {
     throw new Error(`Licensing Error@ ${error}`);
+  }
+}
+
+export async function UpdateDirectoryCategoryAction(
+  categoryId: string,
+  data: DirectoryCategoryFormValues,
+) {
+  await requireAdmin();
+
+  try {
+    const validated = EditDirectoryCategorySchema.parse(data);
+    const { image, ...category } = validated;
+
+    await db.directoryCategory.update({
+      where: { id: categoryId },
+      data: {
+        ...category,
+        slug: slugify(validated.name, { lower: true }),
+        ...(image
+          ? {
+              image: image.url,
+              media: { connect: { id: image.id } },
+            }
+          : {}),
+      },
+    });
+    revalidatePath(categoryPath);
+    return { success: true };
+  } catch (error) {
+    throw new Error(`Directory Category: ${error}`);
+  }
+}
+
+export async function AddDirectoryCategoryAction(
+  data: DirectoryCategoryFormValues,
+) {
+  await requireAdmin();
+  try {
+    const validated = AddDirectoryCategorySchema.parse(data);
+    const { image, ...category } = validated;
+
+    if (!image) {
+      throw new Error("An image is required");
+    }
+
+    await db.directoryCategory.create({
+      data: {
+        ...category,
+        slug: slugify(validated.name, { lower: true }),
+        image: image.url,
+        media: { connect: { id: image.id } },
+      },
+    });
+
+    revalidatePath(categoryPath);
+    return { success: true };
+  } catch (error) {
+    throw new Error(`Directory Category Error: ${error}`);
+  }
+}
+
+export async function FetchDirectoryCategoryById({ id }: { id: string }) {
+  await requireAdmin();
+  return db.directoryCategory.findFirst({ where: { id } });
+}
+
+export async function DeleteDirectoryCategoreyById(id: string) {
+  await requireAdmin();
+  try {
+    const category = await db.directoryCategory.findFirst({
+      where: { id },
+      include: {
+        media: true,
+      },
+    });
+
+    if (!category) throw new Error("Category not found");
+
+    await db.$transaction(async (tx) => {
+      await tx.directoryCategory.delete({
+        where: { id },
+      });
+      await tx.media.delete({
+        where: {
+          id: category.media.id,
+        },
+      });
+    });
+
+    await utapi.deleteFiles(category.media.key);
+
+    revalidatePath(categoryPath);
+    return { success: true };
+  } catch (error) {
+    throw new Error(`${error}`);
   }
 }

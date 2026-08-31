@@ -1,6 +1,5 @@
 import "server-only";
 
-import { utapi } from "@/app/api/uploadthing/core";
 import { db } from "@/lib/db";
 
 export async function findOwnedPendingMedia(mediaId: string, userId: string) {
@@ -9,11 +8,9 @@ export async function findOwnedPendingMedia(mediaId: string, userId: string) {
       id: mediaId,
       uploadedById: userId,
       licensingId: null,
+      directoryCategories: {
+        none: {},
+      },
     },
   });
-}
-
-export async function deleteStoredMedia(media: { id: string; key: string }) {
-  await utapi.deleteFiles(media.key);
-  await db.media.delete({ where: { id: media.id } });
 }

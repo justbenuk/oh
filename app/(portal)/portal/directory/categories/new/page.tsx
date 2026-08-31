@@ -1,3 +1,5 @@
+import AddDirectoryCategoryForm from "@/features/directory/forms/AddDirectoryCategory";
+
 export default function NewDirectoryCategoryPage() {
-  return <div>add form page</div>;
+  return <AddDirectoryCategoryForm />;
 }
