@@ -29,6 +29,14 @@ function createLicensingSlug(name: string) {
   return slugify(name, { lower: true });
 }
 
+export async function FetchAllDirectoryCategories(take?: number) {
+  const data = await db.directoryCategory.findMany({
+    take,
+  });
+
+  return { success: true, data };
+}
+
 export async function DeleteAuthorityById(id: string) {
   await requireAdmin();
   try {

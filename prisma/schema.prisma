@@ -32,18 +32,18 @@ model Media {
   height   Int?
 
   uploadedById String?
-  uploadedBy   User? @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+  uploadedBy   User?   @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
 
   licensingId String?
   licensing   Licensing? @relation(fields: [licensingId], references: [id], onDelete: SetNull)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  directoryCategories DirectoryCategory[]
 
   @@index([uploadedById])
   @@index([licensingId])
   @@index([type])
-
   @@map("media")
 }
 
@@ -54,7 +54,7 @@ model Media {
 model Licensing {
   id            String  @id @default(cuid())
   name          String
-  slug String @default("")
+  slug          String  @unique @default("")
   websiteUrl    String?
   logo          String?
   email         String?
@@ -73,11 +73,14 @@ model Licensing {
 model DirectoryCategory {
   id          String @id @default(cuid())
   name        String
+  slug        String @unique
   description String
   image       String
+  media       Media  @relation(fields: [mediaId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  mediaId   String
 
   @@map("directory-category")
 }
