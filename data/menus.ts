@@ -4,15 +4,15 @@ export const MENUITEMS = [
     items: [
       {
         name: "Companies",
-        href: "/companies",
+        href: "/directory/companies",
       },
       {
         name: "Licensing Authorities",
-        href: "/licensing",
+        href: "/directory/licensing",
       },
       {
         name: "Categories",
-        href: "/categories",
+        href: "/directory/categories",
       },
     ],
   },
